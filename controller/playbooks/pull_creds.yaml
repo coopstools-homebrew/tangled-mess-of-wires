@@ -1,0 +1,10 @@
+---
+- name: Bring forth the kraken
+  hosts: all
+  tasks:
+    - name: Pull forth truths from the deeps
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: remote/{{ inventory_hostname }}/config.yaml
+        flat: yes
+      become: true

@@ -1,0 +1,20 @@
+name: Tool Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build and push ansible tool
+        uses: mr-smithers-excellent/docker-build-push@v5
+        with:
+          image: "tangled-mess-of-wires/ansible"
+          tags: v3
+          registry: ghcr.io
+          dockerfile: controller/AnsibleDockerfile
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}

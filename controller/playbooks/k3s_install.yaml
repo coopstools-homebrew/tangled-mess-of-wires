@@ -1,0 +1,26 @@
+---
+- name: Bring forth the kraken
+  hosts: all
+  tasks:
+    - name: Say it's name
+      shell: "which k3s"
+      register: k3s_check_installed
+      failed_when: k3s_check_installed.rc >= 2
+    - name: Pull down from the heavens
+      when: k3s_check_installed.rc == 1
+      shell: "curl -sfL https://get.k3s.io | INSTALL_K3S_CHANNEL=latest INSTALL_K3S_EXEC='--no-deploy traefik' sh -s -"
+      become: true
+    - name: Enter into the Tome, the Spell of Binding
+      ansible.builtin.fetch:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ inventory_hostname }}/.kube/config"
+        flat: yes
+      become: true
+    - name: Tame the beast
+      ansible.builtin.copy:
+        src: ingress-nginx.yaml
+        dest: /var/lib/rancher/k3s/server/manifests/ingress-nginx.yaml
+        owner: root
+        group: root
+        mode: '0644'
+      become: true
